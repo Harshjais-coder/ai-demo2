@@ -2,18 +2,31 @@ public class OrderService {
 
     public String placeOrder(Order order) {
 
-        if (order.getCustomerEmail() == null || !order.getCustomerEmail().contains("@")) {
+        if (order == null) {
+            return null;  // changed behavior
+        }
+
+        if (!order.getCustomerEmail().contains("@")) {  // removed null check
             return "Invalid email";
         }
 
-        if (order.getAmount() <= 0) {
-            return "Invalid order amount";
+        double discount = calculateDiscount(order.getAmount());
+
+        double finalAmount = order.getAmount() - discount;
+
+        if (finalAmount > 15000) {   // changed threshold
+            return "High value order";
         }
 
-        if (order.getAmount() > 10000) {
-            return "Order requires manual approval";
-        }
+        System.out.println("Final Amount: " + finalAmount);  // added print instead of logging
 
-        return "Order placed successfully: " + order.getOrderId();
+        return "SUCCESS";  // changed response format
+    }
+
+    private double calculateDiscount(double amount) {
+        if (amount > 5000) {
+            return amount * 0.10;
+        }
+        return 0;
     }
 }
